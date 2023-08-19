@@ -10,6 +10,10 @@ public class PlayerController : MonoBehaviour
 
     public int maxJumps = 1;
 
+    private bool isOnGround = false;
+    private float coyoteTime = 0.2f;
+    private float coyoteTimeCounter;
+
     private int remainingJumps;
     private bool isOnWall = false;
     private Vector2 wallNormal;
@@ -58,6 +62,15 @@ public class PlayerController : MonoBehaviour
         {
             isClimbing = false;
         }
+
+        if (isOnGround)
+        {
+            coyoteTimeCounter = coyoteTime;
+        }
+        else
+        {
+            coyoteTimeCounter -= Time.deltaTime;
+        }
     }
 
     void FixedUpdate()
@@ -80,7 +93,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Jump()
     {
-        if (remainingJumps > 0)
+        if (remainingJumps > 0 && coyoteTimeCounter > 0)
         {
             if (isOnWall)
             {
@@ -90,6 +103,7 @@ public class PlayerController : MonoBehaviour
             {
                 rb.velocity = new Vector2(rb.velocity.x, currentJumpForce);
                 remainingJumps--;
+                coyoteTimeCounter = 0;
             }
 
             currentJumpForce = 2f;
@@ -101,6 +115,7 @@ public class PlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             remainingJumps = maxJumps;
+            isOnGround = true;
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
@@ -121,6 +136,11 @@ public class PlayerController : MonoBehaviour
 
     private void OnCollisionExit2D(Collision2D collision)
     {
+        if (collision.gameObject.CompareTag("Ground"))
+        {
+            isOnGround = false;
+        }
+
         if (collision.gameObject.CompareTag("Wall"))
         {
             isOnWall = false;
