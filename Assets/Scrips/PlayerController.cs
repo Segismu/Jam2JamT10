@@ -1,11 +1,13 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float currentJumpForce = 2f;
+    [SerializeField] float minJumpForce = 5f;
+    [SerializeField] float maxJumpForce = 10f;
+    [SerializeField] float currentJumpForce = 5f;
     [SerializeField] float climbSpeed = 2f;
     [SerializeField] float moveSpeed = 3f;
-    [SerializeField] float maxJumpForce = 10f;
     [SerializeField] float jumpChargeRate = 2f;
 
     public int maxJumps = 1;
@@ -21,6 +23,9 @@ public class PlayerController : MonoBehaviour
     private bool noMove = false;
 
     private Rigidbody2D rb;
+
+    public Canvas canvas;
+    public GameObject jumpBar;
 
     void Awake()
     {
@@ -42,21 +47,36 @@ public class PlayerController : MonoBehaviour
 
         if (remainingJumps > 1)
         {
-
             if (Input.GetKey(KeyCode.Space))
             {
                 currentJumpForce = Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
+
+                var image = jumpBar.GetComponent<Image>();
+                image.fillAmount = (currentJumpForce - minJumpForce) / (maxJumpForce - minJumpForce);
+                if (image.fillAmount == 1) jumpBar.GetComponent<Image>().color = Color.red;
             }
         }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
             noMove = true;
+
+            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
+            Vector2 viewportPosition = Camera.main.WorldToViewportPoint(transform.position);
+            Vector2 playerScreenPosition = new Vector2(
+            ((viewportPosition.x * canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x * 0.5f)),
+            ((viewportPosition.y * canvasRect.sizeDelta.y) - (canvasRect.sizeDelta.y * 0.5f) + 15));
+
+            jumpBar.GetComponent<RectTransform>().anchoredPosition = playerScreenPosition;
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
         {
             noMove = false;
+
+            var image = jumpBar.GetComponent<Image>();
+            image.fillAmount = 0;
+            image.color = Color.green;
             Jump();
         }
 
