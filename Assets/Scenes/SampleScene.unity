@@ -508,6 +508,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Square (1)
       objectReference: {fileID: 0}
+    - target: {fileID: 7194661358999383935, guid: 9ae7be539ce0c4b66beca2dd58114dc0, type: 3}
+      propertyPath: m_Material
+      value: 
+      objectReference: {fileID: 6200000, guid: b369abcda55a549529fa2ca235265c90, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9ae7be539ce0c4b66beca2dd58114dc0, type: 3}
 --- !u!1 &844503630
