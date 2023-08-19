@@ -1,189 +1,104 @@
+using Scrips;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float minJumpForce = 5f;
-    [SerializeField] float maxJumpForce = 10f;
-    [SerializeField] float currentJumpForce = 5f;
+    [SerializeField] float currentJumpForce = 2f;
     [SerializeField] float climbSpeed = 2f;
     [SerializeField] float moveSpeed = 3f;
+    [SerializeField] float maxJumpForce = 10f;
     [SerializeField] float jumpChargeRate = 2f;
 
-    public int maxJumps = 1;
+    public static CatState State { get; private set; }
 
-    private bool isOnGround = false;
-    private float coyoteTime = 0.2f;
-    private float coyoteTimeCounter;
-
-    private int remainingJumps;
-    private bool isOnWall = false;
-    private Vector2 wallNormal;
-    private bool isClimbing = false;
-    private bool noMove = false;
-
-    private Rigidbody2D rb;
-
-    public Canvas canvas;
-    public GameObject jumpBar;
+    Rigidbody2D rb;
 
     void Awake()
     {
+        State = CatState.Walk;
         rb = GetComponent<Rigidbody2D>();
-        remainingJumps = maxJumps;
-    }
-
-    void Start()
-    {
-        IncreaseJumps(1);
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && (remainingJumps > 0 || (isOnWall && rb.velocity.y <= 0)))
+        if (State == CatState.Walk && Input.GetKeyDown(KeyCode.Space))
         {
             currentJumpForce = 5f;
+            State = CatState.PreparingJump;
         }
+            
 
-        if (remainingJumps > 1)
+        if (State == CatState.PreparingJump && Input.GetKeyUp(KeyCode.Space))
         {
-            if (Input.GetKey(KeyCode.Space))
-            {
-                currentJumpForce = Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
-
-                var image = jumpBar.GetComponent<Image>();
-                image.fillAmount = (currentJumpForce - minJumpForce) / (maxJumpForce - minJumpForce);
-                if (image.fillAmount == 1) jumpBar.GetComponent<Image>().color = Color.red;
-            }
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space))
-        {
-            noMove = true;
-
-            RectTransform canvasRect = canvas.GetComponent<RectTransform>();
-            Vector2 viewportPosition = Camera.main.WorldToViewportPoint(transform.position);
-            Vector2 playerScreenPosition = new Vector2(
-            ((viewportPosition.x * canvasRect.sizeDelta.x) - (canvasRect.sizeDelta.x * 0.5f)),
-            ((viewportPosition.y * canvasRect.sizeDelta.y) - (canvasRect.sizeDelta.y * 0.5f) + 15));
-
-            jumpBar.GetComponent<RectTransform>().anchoredPosition = playerScreenPosition;
-        }
-
-        if (Input.GetKeyUp(KeyCode.Space))
-        {
-            noMove = false;
-
-            var image = jumpBar.GetComponent<Image>();
-            image.fillAmount = 0;
-            image.color = Color.green;
+            State = CatState.Jump;
             Jump();
         }
 
-        if (isOnWall && Input.GetKey(KeyCode.Space))
+        if((State is CatState.ClimbRightWall or CatState.ClimbLeftWall) && Input.GetKeyUp(KeyCode.Space))
         {
-            isClimbing = true;
+            DoWallJump();
         }
-        else
-        {
-            isClimbing = false;
-        }
+        
+        if (State == CatState.PreparingJump && Input.GetKey(KeyCode.Space))
+            currentJumpForce = 
+                Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
 
-        if (isOnGround)
-        {
-            coyoteTimeCounter = coyoteTime;
-        }
-        else
-        {
-            coyoteTimeCounter -= Time.deltaTime;
-        }
+    }
+
+    void DoWallJump()
+    {
+        rb.velocity = State == CatState.ClimbRightWall ? 
+            new Vector2(-5, 4f) : 
+            new Vector2(5, 4f);
+        State = CatState.WallJump;
     }
 
     void FixedUpdate()
     {
-        float horizontalInput = Input.GetAxis("Horizontal");
-
-        if (horizontalInput != 0 && !isClimbing)
-        {
-            Move(horizontalInput);
-        }
-        else
-        {
-            rb.velocity = new Vector2(rb.velocity.x * 0.9f, rb.velocity.y);
-        }
-
-        if (isClimbing)
-        {
-            rb.velocity = new Vector2(rb.velocity.x, climbSpeed);
-        }
+        if (State == CatState.Walk) 
+            DoHorizontalMovement();
+        
+        if (State is CatState.ClimbRightWall or CatState.ClimbLeftWall) 
+            DoClimb();
+        
+        if(State == CatState.Jump)
+            DoHorizontalMovement();
     }
-    private void Jump()
+
+    void DoClimb()
     {
-        if (remainingJumps > 0 && coyoteTimeCounter > 0)
-        {
-            if (isOnWall)
-            {
-                rb.velocity = new Vector2(-wallNormal.x * moveSpeed, currentJumpForce);
-            }
-            else
-            {
-                rb.velocity = new Vector2(rb.velocity.x, currentJumpForce);
-                remainingJumps--;
-                coyoteTimeCounter = 0;
-            }
-
-            currentJumpForce = 2f;
-        }
+        if(Input.GetKey(KeyCode.Space))
+            rb.velocity = new Vector2(rb.velocity.x, climbSpeed);
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    void DoHorizontalMovement()
+    {
+        var horizontalInput = Input.GetAxis("Horizontal");
+        Move(horizontalInput);
+    }
+    
+    void Move(float direction) => 
+        rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+
+    void Jump()
+    {
+        rb.velocity = new Vector2(rb.velocity.x, currentJumpForce);
+        currentJumpForce = 2f;
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
-            remainingJumps = maxJumps;
-            isOnGround = true;
+            State = CatState.Walk;
         }
         else if (collision.gameObject.CompareTag("Wall"))
         {
-            isOnWall = true;
-            wallNormal = collision.contacts[0].normal.normalized;
+            var contactPoint = collision.GetContact(0).point;
+            if (contactPoint.x > transform.position.x)
+                State = CatState.ClimbRightWall;
+            else
+                State = CatState.ClimbLeftWall;
         }
-    }
-
-    private void OnCollisionStay2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            // Para que no se tranque en las esquinas?
-            isOnWall = true;
-            wallNormal = collision.contacts[0].normal.normalized;
-        }
-    }
-
-    private void OnCollisionExit2D(Collision2D collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            isOnGround = false;
-        }
-
-        if (collision.gameObject.CompareTag("Wall"))
-        {
-            isOnWall = false;
-        }
-    }
-
-    private void Move(float direction)
-    {
-        if (noMove == false)
-        {
-            rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
-        }
-    }
-
-    public void IncreaseJumps(int amount)
-    {
-        maxJumps += amount;
-        remainingJumps += amount;
     }
 }
