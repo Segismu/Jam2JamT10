@@ -18,7 +18,7 @@ public class PlayerController : MonoBehaviour
     private bool isOnWall = false;
     private Vector2 wallNormal;
     private bool isClimbing = false;
-
+    private bool noMove = false;
 
     private Rigidbody2D rb;
 
@@ -49,8 +49,14 @@ public class PlayerController : MonoBehaviour
             }
         }
 
-        if (Input.GetKeyUp(KeyCode.Space) && !isClimbing)
+        if (Input.GetKeyDown(KeyCode.Space))
         {
+            noMove = true;
+        }
+
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            noMove = false;
             Jump();
         }
 
@@ -149,7 +155,10 @@ public class PlayerController : MonoBehaviour
 
     private void Move(float direction)
     {
-        rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+        if (noMove == false)
+        {
+            rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+        }
     }
 
     public void IncreaseJumps(int amount)
