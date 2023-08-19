@@ -36,9 +36,13 @@ public class PlayerController : MonoBehaviour
             currentJumpForce = 5f;
         }
 
-        if (Input.GetKey(KeyCode.Space))
+        if (remainingJumps > 1)
         {
-            currentJumpForce = Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
+
+            if (Input.GetKey(KeyCode.Space))
+            {
+                currentJumpForce = Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
+            }
         }
 
         if (Input.GetKeyUp(KeyCode.Space))
