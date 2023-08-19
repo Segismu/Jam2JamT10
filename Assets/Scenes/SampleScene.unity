@@ -389,6 +389,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
+    - target: {fileID: 241814277023189411, guid: 8a7d9d8fc9b5f425f937770f66fe4c53, type: 3}
+      propertyPath: climbSpeed
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 241814277023189411, guid: 8a7d9d8fc9b5f425f937770f66fe4c53, type: 3}
+      propertyPath: jumpChargeRate
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 241814277023189411, guid: 8a7d9d8fc9b5f425f937770f66fe4c53, type: 3}
+      propertyPath: currentJumpForce
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 241814277023189439, guid: 8a7d9d8fc9b5f425f937770f66fe4c53, type: 3}
       propertyPath: m_RootOrder
       value: 1
