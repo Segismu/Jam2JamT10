@@ -74,10 +74,9 @@ public class PlayerController : MonoBehaviour
             rb.velocity = new Vector2(rb.velocity.x, climbSpeed);
         }
     }
-
     private void Jump()
     {
-        if (currentJumpForce > 0)
+        if (remainingJumps > 0)
         {
             if (isOnWall)
             {
