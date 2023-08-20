@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: -5440633506568163918}
   m_Layer: 0
   m_Name: Cat
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,10 +126,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   spriteRenderer: {fileID: 1228607689907420427}
   animator: {fileID: 5275174222946420993}
-  idle: {fileID: 42456078, guid: 669f7556ad7be3341b4c685eaf830d86, type: 3}
-  prepareJump: {fileID: -1993356471, guid: 669f7556ad7be3341b4c685eaf830d86, type: 3}
-  jump: {fileID: 1418237427, guid: 669f7556ad7be3341b4c685eaf830d86, type: 3}
-  climb: {fileID: -1721865474, guid: 669f7556ad7be3341b4c685eaf830d86, type: 3}
 --- !u!1 &388239368195346270
 GameObject:
   m_ObjectHideFlags: 0
