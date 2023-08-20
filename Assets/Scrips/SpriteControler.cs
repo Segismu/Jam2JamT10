@@ -7,7 +7,7 @@ using UnityEngine;
 public class SpriteControler : MonoBehaviour
 {
     [SerializeField] SpriteRenderer spriteRenderer;
-    [SerializeField] Animation walkAnimation;
+    [SerializeField] Animator animator;
     [SerializeField] Sprite idle;
     [SerializeField] Sprite prepareJump;
     [SerializeField] Sprite jump;
@@ -18,20 +18,24 @@ public class SpriteControler : MonoBehaviour
         switch (PlayerController.State)
         {
             case CatState.Jump:
-                walkAnimation.Stop();
+                animator.SetBool("cat_walk", false);
+                animator.SetTrigger("jump");
                 spriteRenderer.sprite = jump;
                 break;
             case CatState.PreparingJump:
-                walkAnimation.Stop();
+                animator.SetBool("cat_walk", false);
+                animator.SetTrigger("prepare_jump");
                 spriteRenderer.sprite = prepareJump;
                 break;
             case CatState.ClimbRightWall:
-                walkAnimation.Stop();
+                animator.SetBool("cat_walk", false);
+                animator.SetTrigger("climb");
                 spriteRenderer.sprite = climb;
                 spriteRenderer.flipX = false;
                 break;
             case CatState.ClimbLeftWall:
-                walkAnimation.Stop();
+                animator.SetBool("cat_walk", false);
+                animator.SetTrigger("climb");
                 spriteRenderer.sprite = climb;
                 spriteRenderer.flipX = true;
                 break;
@@ -47,18 +51,17 @@ public class SpriteControler : MonoBehaviour
         var horizontalInput = Input.GetAxis("Horizontal");
         if (horizontalInput == 0)
         {
-            walkAnimation.Stop();
+            animator.SetBool("cat_walk", false);
+            animator.SetTrigger("idle");
             spriteRenderer.sprite = idle;
         }else if (horizontalInput > 0)
         {
-            if (!walkAnimation.isPlaying)
-                walkAnimation.Play();
+            animator.SetBool("cat_walk", true);
             spriteRenderer.flipX = false;
         }
         else
         {
-            if (!walkAnimation.isPlaying)
-                walkAnimation.Play();
+            animator.SetBool("cat_walk", true);
             spriteRenderer.flipX = true;
         }
     }
