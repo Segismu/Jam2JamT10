@@ -8,6 +8,8 @@ public class PlayerController : MonoBehaviour
     [SerializeField] float moveSpeed = 3f;
     [SerializeField] float maxJumpForce = 10f;
     [SerializeField] float jumpChargeRate = 2f;
+    [SerializeField] Vector2 leftWallJumpForce = new(5, 4f);
+    [SerializeField] Vector2 rightWallJumpForce = new(-5, 4f);
 
     public static CatState State { get; private set; }
 
@@ -48,8 +50,9 @@ public class PlayerController : MonoBehaviour
     void DoWallJump()
     {
         rb.velocity = State == CatState.ClimbRightWall ? 
-            new Vector2(-5, 4f) : 
-            new Vector2(5, 4f);
+            rightWallJumpForce : 
+            leftWallJumpForce;
+        
         State = CatState.WallJump;
     }
 
