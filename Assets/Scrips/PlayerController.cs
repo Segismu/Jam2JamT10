@@ -1,5 +1,7 @@
+using System;
 using Scrips;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
@@ -98,6 +100,16 @@ public class PlayerController : MonoBehaviour
                 State = CatState.ClimbRightWall;
             else
                 State = CatState.ClimbLeftWall;
+        }
+    }
+
+    void OnCollisionExit2D(Collision2D other)
+    {
+        if (other.gameObject.CompareTag("Wall") &&
+            State == CatState.ClimbLeftWall ||
+            State == CatState.ClimbRightWall)
+        {
+            State = CatState.Jump;
         }
     }
 }
