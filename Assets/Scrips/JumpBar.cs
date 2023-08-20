@@ -8,15 +8,19 @@ using UnityEngine.UI;
 public class JumpBar : MonoBehaviour
 {
    [SerializeField] Image fillImage;
+   [SerializeField] CatConfig catConfig;
 
-   float fillrate = 2;
-   float maxFill = 5;
+   float fillrate;
+   float maxFill;
 
    float currentValue;
 
    public void Awake()
    {
-      fillImage.fillAmount = 0;
+        fillImage.fillAmount = 0;
+
+        maxFill = catConfig.maxJumpForce - catConfig.initialJumpForce;
+        fillrate = catConfig.jumpChargeRate;
    }
 
    void Update()
