@@ -148,11 +148,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 699c7cd8e639c42d295d9dfb5f70f9cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currentJumpForce: 2
   climbSpeed: 2
   moveSpeed: 3
   maxJumpForce: 10
   jumpChargeRate: 2
+  leftWallJumpForce: {x: 5, y: 4}
+  rightWallJumpForce: {x: -5, y: 4}
+  catConfig: {fileID: 11400000, guid: af139564b996646198b95d8e630d6bf0, type: 2}
 --- !u!114 &5918881677028092259
 MonoBehaviour:
   m_ObjectHideFlags: 0

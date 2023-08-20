@@ -3,13 +3,9 @@ using UnityEngine;
 
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] float currentJumpForce = 2f;
-    [SerializeField] float climbSpeed = 2f;
-    [SerializeField] float moveSpeed = 3f;
-    [SerializeField] float maxJumpForce = 10f;
-    [SerializeField] float jumpChargeRate = 2f;
-    [SerializeField] Vector2 leftWallJumpForce = new(5, 4f);
-    [SerializeField] Vector2 rightWallJumpForce = new(-5, 4f);
+    [SerializeField] CatConfig catConfig;
+
+    float currentJumpForce;
 
     public static CatState State { get; private set; }
 
@@ -43,15 +39,15 @@ public class PlayerController : MonoBehaviour
         
         if (State == CatState.PreparingJump && Input.GetKey(KeyCode.Space))
             currentJumpForce = 
-                Mathf.Clamp(currentJumpForce + Time.deltaTime * jumpChargeRate, 0f, maxJumpForce);
+                Mathf.Clamp(currentJumpForce + Time.deltaTime * catConfig.jumpChargeRate, 0f, catConfig.maxJumpForce);
 
     }
 
     void DoWallJump()
     {
-        rb.velocity = State == CatState.ClimbRightWall ? 
-            rightWallJumpForce : 
-            leftWallJumpForce;
+        rb.velocity = State == CatState.ClimbRightWall ?
+            catConfig.rightWallJumpForce :
+            catConfig.leftWallJumpForce;
         
         State = CatState.WallJump;
     }
@@ -71,7 +67,7 @@ public class PlayerController : MonoBehaviour
     void DoClimb()
     {
         if(Input.GetKey(KeyCode.Space))
-            rb.velocity = new Vector2(rb.velocity.x, climbSpeed);
+            rb.velocity = new Vector2(rb.velocity.x, catConfig.climbSpeed);
     }
 
     void DoHorizontalMovement()
@@ -81,7 +77,7 @@ public class PlayerController : MonoBehaviour
     }
     
     void Move(float direction) => 
-        rb.velocity = new Vector2(direction * moveSpeed, rb.velocity.y);
+        rb.velocity = new Vector2(direction * catConfig.moveSpeed, rb.velocity.y);
 
     void Jump()
     {

@@ -9,7 +9,6 @@ public class JumpBar : MonoBehaviour
 {
    [SerializeField] Image fillImage;
 
-   float initialFill = 0;
    float fillrate = 2;
    float maxFill = 5;
 
