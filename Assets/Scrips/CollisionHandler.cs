@@ -2,18 +2,21 @@ using UnityEngine;
 
 public class CollisionHandler : MonoBehaviour
 {
-    private Animator animator;
-
-    private void Start()
-    {
-        animator = GetComponent<Animator>();
-    }
+    [SerializeField] Animator animator;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.gameObject.CompareTag("Player"))
         {
-            animator.SetBool("StartAnimation", true);
+            animator.SetBool("StarBounce", true);
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.gameObject.CompareTag("Player"))
+        {
+            animator.SetBool("StarBounce", false);
         }
     }
 }

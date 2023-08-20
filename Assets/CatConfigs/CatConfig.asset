@@ -16,6 +16,6 @@ MonoBehaviour:
   climbSpeed: 2
   moveSpeed: 3
   maxJumpForce: 10
-  jumpChargeRate: 2
+  jumpChargeRate: 6
   leftWallJumpForce: {x: 3, y: 5}
   rightWallJumpForce: {x: -3, y: 5}
