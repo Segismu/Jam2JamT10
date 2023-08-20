@@ -17,6 +17,8 @@ public class SoundManager : MonoBehaviour
     {
         if (Instance == null)
             Instance = this;
+        
+        backgroundMusic.Play();
     }
 
     public AudioSource GetBGM() => backgroundMusic;
@@ -25,7 +27,14 @@ public class SoundManager : MonoBehaviour
     public AudioSource GetJump() => jump;
     public AudioSource GetClimb() => climb;
     public AudioSource GetLand() => land;
-    
-    
+
+    public void StopAllSFX()
+    {
+        walk.Stop();
+        preparejump.Stop();
+        jump.Stop();
+        climb.Stop();
+        land.Stop();
+    }
     
 }

@@ -1,7 +1,5 @@
-using System;
 using Scrips;
 using UnityEngine;
-using Random = UnityEngine.Random;
 
 public class PlayerController : MonoBehaviour
 {
@@ -25,6 +23,8 @@ public class PlayerController : MonoBehaviour
         {
             currentJumpForce = 5f;
             State = CatState.PreparingJump;
+            SoundManager.Instance.StopAllSFX();
+            SoundManager.Instance.GetPrepareJump().Play();
         }
             
 
@@ -32,11 +32,15 @@ public class PlayerController : MonoBehaviour
         {
             State = CatState.Jump;
             Jump();
+            SoundManager.Instance.StopAllSFX();
+            SoundManager.Instance.GetJump().Play();
         }
 
         if((State is CatState.ClimbRightWall or CatState.ClimbLeftWall) && Input.GetKeyUp(KeyCode.Space))
         {
             DoWallJump();
+            SoundManager.Instance.StopAllSFX();
+            SoundManager.Instance.GetJump().Play();
         }
         
         if (State == CatState.PreparingJump && Input.GetKey(KeyCode.Space))
@@ -68,14 +72,29 @@ public class PlayerController : MonoBehaviour
 
     void DoClimb()
     {
-        if(Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Space))
+        {
+            if (!SoundManager.Instance.GetClimb().isPlaying)
+                SoundManager.Instance.GetClimb().Play();
             rb.velocity = new Vector2(rb.velocity.x, catConfig.climbSpeed);
+        }
+            
     }
 
     void DoHorizontalMovement()
     {
         var horizontalInput = Input.GetAxis("Horizontal");
         Move(horizontalInput);
+
+        if (horizontalInput == 0)
+        {
+            SoundManager.Instance.StopAllSFX();
+        }
+        else
+        {
+            if (!SoundManager.Instance.GetWalk().isPlaying && State == CatState.Walk)
+                SoundManager.Instance.GetWalk().Play();
+        }
     }
     
     void Move(float direction) => 
@@ -100,6 +119,8 @@ public class PlayerController : MonoBehaviour
                 State = CatState.ClimbRightWall;
             else
                 State = CatState.ClimbLeftWall;
+            
+            SoundManager.Instance.StopAllSFX();
         }
     }
 
