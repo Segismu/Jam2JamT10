@@ -9,6 +9,8 @@ public class CollisionHandler : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             animator.SetBool("StarBounce", true);
+
+            Debug.Log("GIL");
         }
     }
 
@@ -17,6 +19,8 @@ public class CollisionHandler : MonoBehaviour
         if (collision.gameObject.CompareTag("Player"))
         {
             animator.SetBool("StarBounce", false);
+
+            Debug.Log("GIL2");
         }
     }
 }
